@@ -46,37 +46,45 @@ def commit(message:str)->bool:
     all_files=[]
 
     for root,dirs,files in os.walk("."):
-        if ".mygit" in root:
-            continue
+        if ".mygit" in dirs:
+            dirs.remove(".mygit")
 
         for file in files:
             file_path=os.path.join(root, file)
+            if file_path != ignored_files:
+                all_files.append(file_path)
 
-        is_ignored=False
-
-        for ignored in ignored_files:
-            if ignored in file_path:
-                is_ignored=True
-                break
-
-        if not is_ignored:
-            all_files.append(file_path)
-
-        with open(".mygit\\.sequence", "r") as file:
+    with open(os.path.join(".mygit",".sequence"), "r") as file:
             commit_id=int(file.read())
 
-        commit_folder=".mygit\\commits\\"+str(commit_id)
+    commit_folder=os.path.join(".mygit","commits",str(commit_id))
 
-        if not os.path.exists(commit_folder):
-            os.mkdir(commit_folder)
 
-        for file_path in all_files:
+    if os.path.exists(commit_folder):
+            raise Exception(f"Commit {commit_id} already exists")
+    else:
+        os.mkdir(commit_folder)
+
+    for file_path in all_files:
             shutil.copy(file_path, commit_folder)
 
-        with open(".mygit\\.sequenсe", "w")as file:
+    with open(os.path.join(".mygit",".sequence"), "w") as file:
             file.write(str(commit_id+1))
 
-        return True
+    return True
 
 #Принудительно заменяет файлы из директории на их версию под номером <id>
 def chekout(commit_id)->bool:
+    import os
+    import shutil
+
+    if not os.path.exists(".mygit"):
+        return False
+
+    with open(os.path.join(".mygit",".sequence"), "r") as file:
+        current_id=int(file.read())
+
+    if commit_id >= current_id or commit_id < 1:
+        return False
+
+    commit_path=os.path.join(".mygit","commits",str(commit_id))
