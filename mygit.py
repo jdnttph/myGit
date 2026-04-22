@@ -2,7 +2,7 @@
 def isExist(path_to_folder):
     import os
     #путь до папки
-    file_path=path_to_folder+"\\.mygitignore"
+    file_path=os.path.join(path_to_folder,".mygitignore")
 
     return os.path.exists(file_path)
 
@@ -26,8 +26,10 @@ def init()->bool:
     os.mkdir(".mygit")
 
     #в sequence лежит id commit
-    with open(".mygit\\.sequence", "w") as file:
+    with open(os.path.join(".mygit",".sequence"), "w") as file:
         file.write("1")
+
+    os.mkdir(os.path.join(".mygit", ".message"))
 
     return True
 
@@ -65,6 +67,9 @@ def commit(message:str)->bool:
     else:
         os.mkdir(commit_folder)
 
+    with open(os.path.join(".mygit",".message",str(commit_id)),"w") as file:
+        file.write(message)
+
     for file_path in all_files:
             shutil.copy(file_path, commit_folder)
 
@@ -74,7 +79,7 @@ def commit(message:str)->bool:
     return True
 
 #Принудительно заменяет файлы из директории на их версию под номером <id>
-def chekout(commit_id)->bool:
+def checkout(commit_id)->bool:
     import os
     import shutil
 
@@ -87,4 +92,8 @@ def chekout(commit_id)->bool:
     if commit_id >= current_id or commit_id < 1:
         return False
 
+
     commit_path=os.path.join(".mygit","commits",str(commit_id))
+    if not os.path.exists(commit_path):
+        return False
+
