@@ -2,7 +2,7 @@ def correct_input(commands:list[str])->bool:
     if len(commands)<2:
         return False
 
-    if commands[1]!="init" or commands[1]!="commit" or commands[1]!= "checkout":
+    if commands[1]!="init" and commands[1]!="commit" and commands[1]!= "checkout":
         return False
 
     if commands[1]=="init" and len(commands)!=2:
