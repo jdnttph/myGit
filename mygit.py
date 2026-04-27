@@ -57,6 +57,7 @@ def commit(message:str)->bool:
         folder=os.path.relpath(root,".")
 
         one_of_ignored=False
+
         for ignored in ignored_files:
             if folder.startswith(ignored):
                 one_of_ignored=True
@@ -67,6 +68,7 @@ def commit(message:str)->bool:
 
         for file in files:
             file_path=os.path.join(root, file)
+
             if file not in ignored_files and file_path != ".mygitignore":
                 all_files.append(file_path)
 
