@@ -18,5 +18,5 @@ def main():
     if args[1]=="checkout":
         checkout(int(args[2]))
 
-    if __name__ == "__main__":
-        main()
+if __name__ == "__main__":
+    main()
